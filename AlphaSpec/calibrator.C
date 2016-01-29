@@ -53,7 +53,7 @@ int calibrator(){
 		fIn >> channel;
 		fIn >> fillValue;
 
-		cout << channel << '\t' << fillValue << endl;
+//		cout << channel << '\t' << fillValue << endl;
 
 		hist->Fill( channel , fillValue );
 	}
