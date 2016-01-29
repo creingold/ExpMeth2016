@@ -32,7 +32,7 @@ int sorterFilm(){
 		exit(1);
 	}
 
-	TH1F *alum4 = new TH1F( "alum4" , "Aluminum Foil, 4 micrometers" , 11000 , 0 , 10999 );
+	TH1F *alum4 = new TH1F( "alum4" , "Aluminum Foil, 4 micrometers" , 4096 , 0 , 10999 );
 
 	char buffer[10];
 	fIn >> buffer;
@@ -57,7 +57,7 @@ int sorterFilm(){
 		exit(1);
 	}
 
-	TH1F *havar4 = new TH1F( "havar4" , "Havar Foil, 4.6 micrometers" , 11000 , 0 , 10999 );
+	TH1F *havar4 = new TH1F( "havar4" , "Havar Foil, 4.6 micrometers" , 4096 , 0 , 10999 );
 
 	fIn >> buffer;
 	fIn >> buffer;
@@ -80,7 +80,7 @@ int sorterFilm(){
 		exit(1);
 	}
 
-	TH1F *alum7 = new TH1F( "alum7" , "Aluminum Foil, 7 micrometers" , 11000 , 0 , 10999 );
+	TH1F *alum7 = new TH1F( "alum7" , "Aluminum Foil, 7 micrometers" , 4096 , 0 , 10999 );
 
 	fIn >> buffer;
 	fIn >> buffer;
@@ -104,7 +104,7 @@ int sorterFilm(){
 		exit(1);
 	}
 
-	TH1F *havar2 = new TH1F( "havar2" , "Havar Foil, 2.3 micrometers" , 11000 , 0 , 10999 );
+	TH1F *havar2 = new TH1F( "havar2" , "Havar Foil, 2.3 micrometers" , 4096 , 0 , 10999 );
 
 	fIn >> buffer;
 	fIn >> buffer;

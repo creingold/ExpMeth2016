@@ -41,7 +41,7 @@ int applyCal(){
 				exit(1);
 			}
 
-			TH1F *hist = new TH1F( histPointer , histName , 11000 , 0 , 10999 );
+			TH1F *hist = new TH1F( histPointer , histName , 4096 , 0 , 10999 );
 
 			fIn >> buffer;
 			fIn >> buffer;
@@ -67,7 +67,7 @@ int applyCal(){
 		exit(1);
 	}
 
-	TH1F *hist = new TH1F( "fullSpec" , "Full Spectrum After Calibration" , 11000 , 0 , 10999 );
+	TH1F *hist = new TH1F( "fullSpec" , "Full Spectrum After Calibration" , 4096 , 0 , 10999 );
 
 	fIn >> buffer;
 	fIn >> buffer;
