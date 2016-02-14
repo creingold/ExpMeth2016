@@ -76,7 +76,7 @@ int TGE(){
 
 	for ( int j = 0 ; j < 8 ; j++ ){
 		dBias[j] = 0.05;
-		res[j] = 2*sqrt(2*log(2)) * std1[j];
+		res[j] = 2*sqrt(2*log(2)) * std1[j] / mean1[j];
 		cout << std1[j] << '\t' << res[j] << endl;
 
 		dRes[j] = res[j]*sqrt( pow ( dStd1[j]/std1[j], 2) + pow ( dMean1[j]/mean1[j] , 2) );

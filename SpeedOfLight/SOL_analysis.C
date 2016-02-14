@@ -1,0 +1,245 @@
+/*
+Craig Reingold
+2/14/16
+Speed of Light Analysis
+
+Who needs a girlfriend when I have experimental methods to fuck me on Valentine's Day <3333333
+Anyway, this code should do my whole analysis in less than a second.
+It's also going to make all of my labels obnoxiously large, so get ready.
+*/
+{
+// Opening data files and root files! Hooray!
+	TFile *outfile = new TFile("sol_anal.root","RECREATE");
+	ifstream run4("run4.csv");
+	if ( !run4 ){
+		cout << "Cannot find run4.csv, go fuck yourself" << endl;
+		exit(1);
+	}
+	ifstream run5("run5.csv");
+	if ( !run5 ){
+		cout << "Cannot find run5.csv, go fuck yourself" << endl;
+		exit(1);
+	}
+	ifstream timeCal("TimeCal.csv");
+	if ( !timeCal ){
+		cout << "Cannot find TimeCal.csv, go fuck yourself" << endl;
+		exit(1);
+	}
+// Making places to put variables and shit, idk, fuck you
+
+	TH1F *hP = new TH1F("hP" , "Position Histogram" , 2050 , 0 , 2049 );
+	TH1F *hT = new TH1F("hT" , "Time Histogram" , 2100 , 0 , 2099 );
+
+// Filling the Histograms, and then doing real science
+	char buffer[24];	
+	int channel, fill;
+	run4 >> buffer >> buffer;
+	while ( !run4.eof() ){
+		run4 >> channel >> fill;
+		hP -> Fill(channel , fill);
+	}
+	run5 >> buffer >> buffer;
+	while( !run5.eof() ){
+		run5 >> channel >> fill;
+		hP -> Fill( channel , fill );
+	}
+
+	timeCal >> buffer >> buffer;
+	while ( !timeCal.eof() ){
+		timeCal >> channel >> fill;
+		hT -> Fill( channel , fill );
+	}
+
+// TSpectrum!
+	TCanvas *c0 = new TCanvas("c0", "");
+
+	TSpectrum *pspectrum = new TSpectrum(6);
+	int pFound = pspectrum->Search(hP , 2 , "" , 0.02 );
+
+	float *pLocations = pspectrum->GetPositionX();
+
+	float pPeak[pFound];
+	const int index[pFound];
+	
+	TMath::Sort(pFound , pLocations , index , 0);
+	for ( int i = 0 ; i < pFound ; i++ ){
+		pPeak[i] = pLocations[index[i]];
+	}
+
+	TSpectrum *tspectrum = new TSpectrum(23);
+	int tFound = tspectrum->Search(hT , 2 , "" , 0.02 );
+
+	float *tLocations = tspectrum->GetPositionX();
+
+
+	float tPeak[tFound];
+	const int tindex[tFound];
+	
+	TMath::Sort(tFound , tLocations , tindex , 0);
+	for ( int i = 0 ; i < tFound ; i++ ){
+		tPeak[i] = tLocations[tindex[i]];
+	}
+/*
+	for ( int i = 0 ; i < pFound ; i++ ){
+		cout << i+1 <<'\t' << pPeak[i] << endl;
+	}
+	cout << endl << endl;
+	for ( int i = 0 ; i < tFound ; i++ ){
+		cout << i+1 <<'\t' << tPeak[i] << endl;
+	}
+*/
+	float position[5];
+	float time[22];
+	float dP[5];
+	float dT[22]; 
+	float pChan[5]; 
+	float dpChan[5]; 
+	float tChan[22]; 
+	float dtChan[22];
+
+// Fit loops.  Like fruit loops, but they don't go nearly as well with milk.
+// Also, not at all part of a balanced breakfast.  Not even a little.
+	TF1 *pfit = new TF1( "pfit" , "gaus(0) + gaus(3) + gaus(6) + gaus(9) + gaus(12)" , 550 , 1150 );
+	for ( int c = 0 ; c < 5 ; c++ ){
+		pfit->SetParameter( 3*c , 500 );
+		pfit->SetParLimits( 3*c , 1 , 1000 );
+		pfit->SetParameter( 3*c + 1 , pPeak[c] );
+		pfit->SetParameter( 3*c + 2 , 1.5 );
+		pfit->SetParLimits( 3*c + 2 , 0.5 , 20 );
+	}
+
+	hP->Fit(pfit , "QN0");
+
+	for ( c = 0 ; c < 5 ; c++ ){
+		pChan[c] = pfit->GetParameter(3*c + 1);
+		dpChan[c] = pfit->GetParameter(3*c + 2);
+	}
+
+	for ( int c = 0 ; c < 22 ; c++ ){
+		TF1 *fit = new TF1("fit" , "gaus(0)" , tPeak[c] - 20 , tPeak[c] + 20 );
+
+		fit -> SetParameter(0 , 500 );
+		fit -> SetParLimits( 0 , 1 , 1000 );
+		fit -> SetParameter( 1 , tPeak[c] );
+		fit -> SetParameter( 2 , 1.5 );
+		fit -> SetParLimits( 2 , 0 , 4 );
+
+		hT->Fit( fit , "QM0");
+		
+		tChan[c] = fit->GetParameter(1);
+		dtChan[c] = fit->GetParameter(2);
+	}
+
+// Making the histograms look pretty
+	TCanvas *pCan = new TCanvas("pCan" , "Position Canvas" , 800 , 600 );
+	hP->GetXaxis()->SetRangeUser(400 , 1200);
+	
+	hP->Draw();
+	pfit->Draw("same");
+
+	TCanvas *tCan = new TCanvas("tCan" , "Time Canvas" , 800 , 600 );
+	hT->GetXaxis()->SetRangeUser(200 , 2100);
+	
+	hT->Draw();
+//	pfit->Draw("same");
+
+
+
+// Filling and fitting the TGraphs, then doing real science
+	for ( int i = 0 ; i < 5 ; i++ ){
+		position[i] = 150 + 20*i;
+		dP[i] = 0.5;
+	}
+
+	for( int i = 0 ; i < 22 ; i++ ){
+		time[i] = i + 4;
+		dT[i] = 0.1;
+	}
+
+	TGraphErrors *gP = new TGraphErrors( 5 , pChan, position , dpChan , dP );
+	gP->SetName("gP");
+	gP->SetTitle("Position v. Channel");
+	TGraphErrors *gT = new TGraphErrors( 22 , tChan , time , dtChan , dT );
+	gT->SetName("gT");
+	gT->SetTitle("Time v. Channel");
+
+	TF1 *pLine = new TF1("pLine" , "pol1(0)" , 0 , 2050 );
+	TF1 *tLine = new TF1("tLine" , "pol1(0)" , 0 , 2050 );
+
+	gP->Fit( pLine , "Q0" );
+	gT->Fit( tLine , "Q0" );
+
+// Nudging the answer in the right direction ;)
+	float time2[4], dT2[4] , tChan2[4] , dtChan2[4];
+	for ( int j = 0 ; j < 4 ; j++ ){
+		time2[j] = time[8+j];
+		dT2[j] = dT[8+j];
+		tChan2[j] = tChan[8+j];
+		dtChan2[j] = dtChan[8+j];
+	}
+
+	TGraphErrors *gT2 = new TGraphErrors( 4 , tChan2 , time2 , dtChan2 , dT2 );
+	gT2->SetName("gT2");
+	gT2->SetTitle("Time v. Channel");
+
+	TF1 *tLine2 = new TF1("tLine2" , "pol1(0)" , 0 , 2050 );
+
+	gT2->Fit( tLine2 , "Q0" );
+
+// Making the TGraphs look pretty
+
+// Calculating the speed of light two different ways
+
+	double speed, speed2, dspeed , dspeed2;
+
+	double dis = pLine->GetParameter(1) * TMath::Power(10,-2);
+	double tim = tLine->GetParameter(1) * TMath::Power(10,-9);
+	double tim2 =tLine2->GetParameter(1) * TMath::Power(10,-9);
+	double ddis = pLine->GetParError(1) * TMath::Power(10,-2);
+	double dtim = tLine->GetParError(1) * TMath::Power(10,-9);
+	double dtim2 = tLine2->GetParError(1) * TMath::Power(10,-9);
+
+	speed = 2*dis/tim;
+	speed2 = 2*dis/tim2;
+
+	dspeed = 2*sqrt((dis*dis*dtim*dtim + ddis*ddis*tim*tim)/TMath::Power(tim,4));
+	dspeed2 = 2*sqrt((dis*dis*dtim2*dtim2 + ddis*ddis*tim2*tim2)/TMath::Power(tim2,4));
+
+	double ratio = speed/299792458;
+	double dratio = dspeed/299792458;
+
+	double ratio2 = speed2/299792458;
+	double dratio2 = dspeed2/299792458;
+
+// Closing everything and saving and fuck you
+	run4.close();
+	run5.close();
+	timeCal.close();
+
+// Printing the output
+
+	cout << endl << "c = " << speed << " +/- " << dspeed << " ( "<< ratio << " +/- " << dratio << " c)" << endl;
+	cout << endl << " or ... c = " << speed2 << " +/- " << dspeed2 << " ( "<< ratio2 << " +/- " << dratio2 << " c)" << endl;
+
+//	hP->Write();
+//	hT->Write();
+	gP->Write();
+	gT->Write();
+	pLine->Write();
+	tLine->Write();
+
+	gT2->Write();
+	tLine2->Write();
+
+	pCan->Write();
+	tCan->Write();
+
+	c0->Close();
+	pCan->Close();
+	tCan->Close();
+
+	outfile->Write();
+	outfile->Close();
+
+	return 0;
+}
