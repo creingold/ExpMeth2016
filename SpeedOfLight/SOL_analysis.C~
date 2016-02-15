@@ -189,7 +189,6 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 // Making TGraphs look pretty
 
 	TCanvas *tCan = new TCanvas("tCan" , "Time v. Channel" , 900 , 600 );
-	TPad *tPad = new TPad("tPad","A TPad");
 
 	tLine->SetLineColor(13);
 	tLine->SetLineStyle(2);
@@ -204,8 +203,6 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 	pTL.DrawLatex(1100 , 0 , "Channel");
 */
 
-	tCan->SetPadLeftMargin(0.15);
-
 	gT->GetXaxis()->SetNdivisions( 5 , 5 , 0);
 	gT->GetYaxis()->SetNdivisions( 10 , 0 , 0);
 	
@@ -218,7 +215,7 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 //	gT->GetXaxis()->SetLabelFonts(102);
 //	gT->GetXaxis()->SetLabelSize(0.05);
 
-	gT->GetYaxis()->SetTitle("Time Difference (s)");	
+	gT->GetYaxis()->SetTitle("Time Difference (ns)");	
 	gT->GetYaxis()->SetTitleFont(102);
 	gT->GetYaxis()->SetTitleSize(0.06);
 	gT->GetYaxis()->SetTitleOffset( 0.6 );
@@ -229,6 +226,39 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 
 	TCanvas *pCan = new TCanvas("pCan" , "Position v. Channel" , 800 , 600 );
 
+	pLine->SetLineColor(13);
+	pLine->SetLineStyle(2);
+
+	gP->Draw("AP");
+	pLine->Draw("same");
+/*
+	TLatex pTL;
+	pTL.SetTextFont(43);
+	pTL.SetTextSize(35);
+	pTL.SetTextAlign(13);
+	pTL.DrawLatex(1100 , 0 , "Channel");
+*/
+
+	gP->GetXaxis()->SetNdivisions( 5 , 5 , 0);
+	gP->GetYaxis()->SetNdivisions( 10 , 0 , 0);
+	
+	gP->GetXaxis()->SetTitle("Channel");
+	gP->GetXaxis()->SetTitleFont(102);
+	gP->GetXaxis()->SetTitleSize(0.06);
+	gP->GetXaxis()->SetTitleOffset( 0.6 );
+	gP->GetXaxis()->CenterTitle();
+
+//	gT->GetXaxis()->SetLabelFonts(102);
+//	gT->GetXaxis()->SetLabelSize(0.05);
+
+	gP->GetYaxis()->SetTitle("Source Position (cm)");	
+	gP->GetYaxis()->SetTitleFont(102);
+	gP->GetYaxis()->SetTitleSize(0.06);
+	gP->GetYaxis()->SetTitleOffset( 0.6 );
+	gP->GetYaxis()->CenterTitle();
+
+//	gT->GetYaxis()->SetLabelFont(102);
+//	gT->GetYaxis()->SetLabelSize(0.05);
 
 
 // Calculating the speed of light two different ways

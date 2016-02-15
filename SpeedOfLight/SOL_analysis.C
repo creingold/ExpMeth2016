@@ -3,7 +3,6 @@ Craig Reingold
 2/14/16
 Speed of Light Analysis
 
-Who needs a girlfriend when I have experimental methods to fuck me on Valentine's Day <3333333
 Anyway, this code should do my whole analysis in less than a second.
 It's also going to make all of my labels obnoxiously large, so get ready.
 */
@@ -25,12 +24,12 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 		cout << "Cannot find TimeCal.csv, go fuck yourself" << endl;
 		exit(1);
 	}
-// Making places to put variables and shit, idk, fuck you
+// Making histograms to put the data
 
 	TH1F *hP = new TH1F("hP" , "Position Histogram" , 2050 , 0 , 2049 );
 	TH1F *hT = new TH1F("hT" , "Time Histogram" , 2100 , 0 , 2099 );
 
-// Filling the Histograms, and then doing real science
+// Filling the Histograms, and then fitting
 	char buffer[24];	
 	int channel, fill;
 	run4 >> buffer >> buffer;
@@ -145,7 +144,7 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 
 
 
-// Filling and fitting the TGraphs, then doing real science
+// Filling and fitting the TGraphs, then calculating c with error propagation
 	for ( int i = 0 ; i < 5 ; i++ ){
 		position[i] = 150 + 20*i;
 		dP[i] = 0.5;
@@ -169,7 +168,7 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 	gP->Fit( pLine , "Q0" );
 	gT->Fit( tLine , "Q0" );
 
-// Nudging the answer in the right direction ;)
+// Trying the analysis with a four point calibration instead of a 22 point one
 	float time2[4], dT2[4] , tChan2[4] , dtChan2[4];
 	for ( int j = 0 ; j < 4 ; j++ ){
 		time2[j] = time[8+j];
@@ -284,14 +283,14 @@ It's also going to make all of my labels obnoxiously large, so get ready.
 	double ratio2 = speed2/299792458;
 	double dratio2 = dspeed2/299792458;
 
-// Closing everything and saving and fuck you
+// Closing everything and saving
 	run4.close();
 	run5.close();
 	timeCal.close();
 
 // Printing the output
 
-	cout << endl << "c = " << speed << " +/- " << dspeed << " ( "<< ratio << " +/- " << dratio << " c)" << endl;
+	cout << setprecision(9) << endl << "c = " << speed << " +/- " << dspeed << " ( "<< ratio << " +/- " << dratio << " c)" << endl;
 	cout << endl << " or ... c = " << speed2 << " +/- " << dspeed2 << " ( "<< ratio2 << " +/- " << dratio2 << " c)" << endl;
 
 //	hP->Write();
