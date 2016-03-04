@@ -10,6 +10,8 @@ It does exactly what is says it will do
 #include<iomanip>
 #include<fstream>
 
+#include<stdlib.h>
+
 #include<TROOT.h>
 #include<TFile.h>
 #include<TCanvas.h>
@@ -51,6 +53,8 @@ int calibrator(){
 	graph->Fit( calLine , "QN0" );
 
 	cout << setprecision(4) << endl << "Calibration = (" << calLine->GetParameter(0) << " +/- " << calLine->GetParError(0) << ") + (" << calLine->GetParameter(1) << " +/- " << calLine->GetParError(1) << ") * chan" << endl;
+
+	system("cowsay -f unipony U did it");
 
 	return 0;
 }
