@@ -71,7 +71,7 @@ int analysis(){
 	hcal -> GetXaxis()->SetTitleOffset(0.7);
 	hcal -> GetXaxis()->CenterTitle();
 
-	hcal -> GetYaxis()->SetTitle("Channels");
+	hcal -> GetYaxis()->SetTitle("Counts");
 	hcal -> GetYaxis()->SetTitleSize(0.06);
 	hcal -> GetYaxis()->SetTitleOffset(0.7);
 	hcal -> GetYaxis()->CenterTitle();
@@ -85,7 +85,7 @@ int analysis(){
 	float tau = -1/expoPar[1];
 	float err = fit->GetParError(1);
 	float tauError = err/(expoPar[1]*expoPar[1]);
-	sprintf( texOut , "#tau = %f #pm %f #mus" , tau ,tauError );
+	sprintf( texOut , "#tau = %.3f #pm %.3f #mus" , tau ,tauError );
 
 	latex.DrawLatex(1.0,450,texOut);
 
