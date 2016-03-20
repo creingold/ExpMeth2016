@@ -25,9 +25,9 @@ int analysis(){
 	hcal->Draw();
 
 // Defining the fit functions
-	TF1 *fit = new TF1( "fit", "expo(0) + gaus(2)" , 0 , 10.15 );
-	TF1 *gausFit = new TF1 ( "gausFit" , "gaus(0)" , 0 , 10.15 );
-	TF1 *expoFit = new TF1 ( "expoFit" , "expo(0)" , 0 , 10.15 );
+	TF1 *fit = new TF1( "fit", "expo(0) + gaus(2)" , -0.2 , 10.15 );
+	TF1 *gausFit = new TF1 ( "gausFit" , "gaus(0)" , -0.2 , 10.15 );
+	TF1 *expoFit = new TF1 ( "expoFit" , "expo(0)" , -0.2 , 10.15 );
 
 // Setting parameters for initial fit
 	fit->SetParameters( 6.24 , -0.43 , 29.75 , 7.31 , 2.38 );
@@ -80,7 +80,14 @@ int analysis(){
 	TLatex latex;
 	latex.SetTextSize(0.045);
 	latex.SetTextAlign(11);
-	latex.DrawLatex(1.0,450,"#tau = 2.308 #pm 0.024 #mus");
+
+	char texOut[125];
+	float tau = -1/expoPar[1];
+	float err = fit->GetParError(1);
+	float tauError = err/(expoPar[1]*expoPar[1]);
+	sprintf( texOut , "#tau = %f #pm %f #mus" , tau ,tauError );
+
+	latex.DrawLatex(1.0,450,texOut);
 
 // Making a legend
 	leg = new TLegend( 0.7 , 0.6 , 0.9 , 0.9 );
