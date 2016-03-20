@@ -63,17 +63,17 @@ int analysis(){
 	gausFit->Draw("same");
 
 // Making everything look pretty
-	hcal -> SetTitle("Muon Decay Spectrum");
-	gStyle->SetTitleFontSize(0.07);
+	hcal -> SetTitle("");
+	gStyle->SetTitleFontSize(0.001);
 
 	hcal -> GetXaxis()->SetTitle("Time (\\mu s)");
-	hcal -> GetXaxis()->SetTitleSize(0.06);
-	hcal -> GetXaxis()->SetTitleOffset(0.7);
+	hcal -> GetXaxis()->SetTitleSize(0.05);
+	hcal -> GetXaxis()->SetTitleOffset(0.8);
 	hcal -> GetXaxis()->CenterTitle();
 
 	hcal -> GetYaxis()->SetTitle("Counts");
-	hcal -> GetYaxis()->SetTitleSize(0.06);
-	hcal -> GetYaxis()->SetTitleOffset(0.7);
+	hcal -> GetYaxis()->SetTitleSize(0.05);
+	hcal -> GetYaxis()->SetTitleOffset(0.8);
 	hcal -> GetYaxis()->CenterTitle();
 
 // Using TLatex maybe IDK
@@ -91,7 +91,7 @@ int analysis(){
 
 // Making a legend
 	leg = new TLegend( 0.7 , 0.6 , 0.9 , 0.9 );
-	leg->SetTextSize(0.04);
+	leg->SetTextSize(0.03);
 	leg->SetHeader("Legend");
 	leg->AddEntry( hcal , "Data" , "l" );
 	leg->AddEntry( fit , "Full Fit" , "l" );
