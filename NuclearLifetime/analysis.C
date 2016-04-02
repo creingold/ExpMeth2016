@@ -26,7 +26,7 @@ int analysis(){
 	hcal->Draw();
 
 // Defining the fit functions
-	TF1 *fit = new TF1( "fit", "expo(0) + pol0(2)" , 85 , 1000 );
+	TF1 *fit = new TF1( "fit", "expo(0) + pol1(2)" , 85 , 1000 );
 	TF1 *linFit = new TF1 ( "linFit" , "pol1(0)" , 85 , 1000 );
 	TF1 *expoFit = new TF1 ( "expoFit" , "expo(0)" , 85 , 1000 );
 
@@ -85,7 +85,7 @@ int analysis(){
 	char texOut[125];
 	float tau = -log(2)/expoPar[1];
 	float err = fit->GetParError(1);
-	float tauError = err/(log(2)*log(2)*expoPar[1]*expoPar[1]);
+	float tauError = log(2)*err/(expoPar[1]*expoPar[1]);
 	sprintf( texOut , "#tau = %.3f #pm %.3f ns" , tau ,tauError );
 
 	latex.DrawLatex(300 , 5000,texOut);
