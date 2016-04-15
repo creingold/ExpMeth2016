@@ -25,7 +25,7 @@
 	float time, pos;
 	int count;
 	
-	TH1F *h = new TH1F("h", "h", 151, 0, 150);
+	TH1F *h = new TH1F("h", "h", 601, 0, 150);
 	h->SetStats(kFALSE);
 	h->SetTitle(rawfile.c_str());
 	
