@@ -47,14 +47,14 @@ int analysis(){
 	float time, pos;
 	int count;
 	
-	TH1F *h = new TH1F("h", "h", 601, 0, 150);
+	TH1F *h = new TH1F("h", "h", 2401, 0, 150);
 	h->SetStats(kFALSE);
-	h->SetTitle(rawfile.c_str());
+	h->SetTitle((rawfile.substr(0, period_position)).c_str());
 	
 	h->GetXaxis()->SetTitle("Position (mm)");
 	h->GetXaxis()->CenterTitle();
 	
-	h->GetYaxis()->SetTitle("Intensity");
+	h->GetYaxis()->SetTitle("Relative Intensity");
 	h->GetYaxis()->CenterTitle();
 	
 	tree->Branch("Position (mm)", &pos, "pos/F");
@@ -67,7 +67,8 @@ int analysis(){
 		h->Fill(pos, count);
 		tree->Fill();
 	}
-	
+	float max = h->GetMaximum();
+	h->Scale(1/max);
 	h->Draw();
 	c1->cd(2);
 
@@ -78,6 +79,7 @@ int analysis(){
 	TVirtualFFT::SetTransform(0);
 	hm = h->FFT(hm, "MAG");
 	hm -> SetTitle("Magnitude of the First Transform");
+	hm -> SetStats(kFALSE);
 	hm -> Draw();
 
 /*
