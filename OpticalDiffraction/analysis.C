@@ -47,14 +47,14 @@ int analysis(){
 	float time, pos;
 	int count;
 	
-	TH1F *h = new TH1F("h", "h", 601, 0, 150);
+	TH1F *h = new TH1F("h", "h", 2401, 0, 150);
 	h->SetStats(kFALSE);
-	h->SetTitle(rawfile.c_str());
+	h->SetTitle(/*(rawfile.substr(0, period_position)).c_str()*/"Interferogram");
 	
 	h->GetXaxis()->SetTitle("Position (mm)");
 	h->GetXaxis()->CenterTitle();
 	
-	h->GetYaxis()->SetTitle("Intensity");
+	h->GetYaxis()->SetTitle("Relative Intensity");
 	h->GetYaxis()->CenterTitle();
 	
 	tree->Branch("Position (mm)", &pos, "pos/F");
@@ -67,7 +67,8 @@ int analysis(){
 		h->Fill(pos, count);
 		tree->Fill();
 	}
-	
+	float max = h->GetMaximum();
+	h->Scale(1/max);
 	h->Draw();
 	c1->cd(2);
 
@@ -77,7 +78,17 @@ int analysis(){
 	TH1 *hm = 0;
 	TVirtualFFT::SetTransform(0);
 	hm = h->FFT(hm, "MAG");
-	hm -> SetTitle("Magnitude of the First Transform");
+	hm -> SetTitle("Fourier Transform");
+	hm -> SetStats(kFALSE);
+
+	hm->GetXaxis()->SetTitle("wavenumber (1/mm)");
+	hm->GetXaxis()->CenterTitle();
+
+	hm->GetYaxis()->SetTitle("Magnitude");
+	hm->GetYaxis()->CenterTitle();
+
+	hm->GetXaxis()->SetLimits(0, 16*2*3.14159265359);
+	hm->GetXaxis()->SetRangeUser(0, 16*3.14159265359);
 	hm -> Draw();
 
 /*
@@ -118,34 +129,54 @@ int analysis(){
 
 	expoFit->Draw("same");
 	linFit->Draw("same");
-
+*/
 // Making everything look pretty
-	hcal -> SetTitle("");
-	gStyle->SetTitleFontSize(0.001);
+//	hcal -> SetTitle("");
+//	gStyle->SetTitleFontSize(0.001);
 
-	hcal -> GetXaxis()->SetTitle("Time (ns)");
-	hcal -> GetXaxis()->SetTitleSize(0.05);
-	hcal -> GetXaxis()->SetTitleOffset(0.8);
-	hcal -> GetXaxis()->CenterTitle();
+//	hcal -> GetXaxis()->SetTitle("Time (ns)");
+	h -> GetXaxis()->SetTitleSize(0.05);
+	h -> GetXaxis()->SetTitleOffset(0.8);
+	h -> GetXaxis()->SetLabelSize(0.04);
 
-	hcal -> GetYaxis()->SetTitle("Counts");
-	hcal -> GetYaxis()->SetTitleSize(0.05);
-	hcal -> GetYaxis()->SetTitleOffset(0.9);
-	hcal -> GetYaxis()->CenterTitle();
+//	hcal -> GetYaxis()->SetTitle("Counts");
+	h -> GetYaxis()->SetTitleSize(0.05);
+	h -> GetYaxis()->SetTitleOffset(0.9);
+	h -> GetYaxis()->SetLabelSize(0.04);
+
+	hm-> GetXaxis()->SetTitleSize(0.05);
+	hm-> GetXaxis()->SetTitleOffset(0.8);
+	hm-> GetXaxis()->SetLabelSize(0.04);
+
+	hm-> GetYaxis()->SetTitleSize(0.05);
+	hm-> GetYaxis()->SetTitleOffset(0.9);
+	hm-> GetYaxis()->SetLabelSize(0.04);
 
 // Using TLatex maybe IDK
+	c1->cd(1);
+
 	TLatex latex;
 	latex.SetTextSize(0.045);
 	latex.SetTextAlign(11);
 
 	char texOut[125];
-	float tau = -log(2)/expoPar[1];
-	float err = fit->GetParError(1);
-	float tauError = log(2)*err/(expoPar[1]*expoPar[1]);
-	sprintf( texOut , "#tau = %.3f #pm %.3f ns" , tau ,tauError );
+//	float tau = -log(2)/expoPar[1];
+//	float err = fit->GetParError(1);
+//	float tauError = log(2)*err/(expoPar[1]*expoPar[1]);
+	char aValue[32];
 
-	latex.DrawLatex(300 , 5000,texOut);
+	cout << "What is your 'a' value?" << endl;
+	cin >> aValue;
 
+//Comment out for single slit
+	char dValue[5];
+	cout << "What is your 'd' value?" << endl;
+	cin >> dValue;
+
+	sprintf( texOut , "#splitline{a = %s #mum}{d = %s #mum}" , aValue, dValue );
+
+	latex.DrawLatex(100 , 0.6 ,texOut);
+/*
 // Making a legend
 	leg = new TLegend( 0.7 , 0.6 , 0.9 , 0.9 );
 	leg->SetTextSize(0.03);
@@ -154,8 +185,8 @@ int analysis(){
 	leg->AddEntry( fit , "Full Fit" , "l" );
 	leg->AddEntry( expoFit , "Indiv. Fits" , "l" );
 	leg->Draw();
-
 */
+
 	outFile -> Write();
 
 	return 0;
