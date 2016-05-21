@@ -49,11 +49,8 @@ int analysis(){
 	
 	TH1F *h = new TH1F("h", "h", 2401, 0, 150);
 	h->SetStats(kFALSE);
-<<<<<<< HEAD
 	h->SetTitle(/*(rawfile.substr(0, period_position)).c_str()*/"Interferogram");
-=======
 	h->SetTitle((rawfile.substr(0, period_position)).c_str());
->>>>>>> 71d8508b6d1a78f9edae05ce981d38c986c3ead5
 	
 	h->GetXaxis()->SetTitle("Position (mm)");
 	h->GetXaxis()->CenterTitle();
@@ -82,7 +79,6 @@ int analysis(){
 	TH1 *hm = 0;
 	TVirtualFFT::SetTransform(0);
 	hm = h->FFT(hm, "MAG");
-<<<<<<< HEAD
 	hm -> SetTitle("Fourier Transform");
 	hm -> SetStats(kFALSE);
 
@@ -94,10 +90,8 @@ int analysis(){
 
 	hm->GetXaxis()->SetLimits(0, 16*2*3.14159265359);
 	hm->GetXaxis()->SetRangeUser(0, 16*3.14159265359);
-=======
 	hm -> SetTitle("Magnitude of the First Transform");
 	hm -> SetStats(kFALSE);
->>>>>>> 71d8508b6d1a78f9edae05ce981d38c986c3ead5
 	hm -> Draw();
 
 /*
